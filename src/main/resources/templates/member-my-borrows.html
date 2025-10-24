@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>My Borrowed Books</title>
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body class="bg-light">
+
+<div class="container mt-5">
+    <h2 th:text="'📚 My Borrowed Books (Member ID: ' + ${user.id} + ')'"></h2>
+    <div th:if="${param.returned}" class="alert alert-success mt-3">
+        ✅ Book returned successfully!
+    </div>
+
+
+    <div th:if="${#lists.isEmpty(borrowedBooks)}">
+        <p class="text-muted mt-4">You haven’t borrowed any books yet.</p>
+    </div>
+
+    <div th:unless="${#lists.isEmpty(borrowedBooks)}">
+        <table class="table table-bordered table-striped mt-4">
+            <thead class="table-dark">
+                <tr>
+                    <th>Book Name</th>
+                    <th>ISBN</th>
+                    <th>Issue Date</th>
+                    <th>Due Date</th>
+                    <th>Return Date</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+    <tr th:each="record : ${borrowedBooks}">
+        <td th:text="${record.book.name}"></td>
+        <td th:text="${record.book.isbn}"></td>
+        <td th:text="${record.issueDate}"></td>
+        <td th:text="${record.dueDate}"></td>
+        <td th:text="${record.returnDate != null ? record.returnDate : 'Not Returned'}"></td>
+        <td>
+            <span th:if="${record.returnDate != null}" class="text-success fw-bold">Returned</span>
+
+            <a th:if="${record.returnDate == null}"
+               th:href="@{'/member/return-book/' + ${record.book.id}}"
+               class="btn btn-warning btn-sm"
+               onclick="return confirm('Are you sure you want to return this book?');">
+               🔙 Return Book
+            </a>
+        </td>
+    </tr>
+</tbody>
+
+        </table>
+    </div>
+
+    <a href="/member/dashboard" class="btn btn-secondary mt-3">⬅ Back to Dashboard</a>
+</div>
+
+</body>
+</html>
